@@ -1,0 +1,25 @@
+{
+	"out_dir": "/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Trento/pyDate_SGM/",
+	"temporary_dir": "/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Trento/pyDate_SGM/tmp_andrea",
+	"images": [{
+			"img": "/Volumes/Samsung_T5/Satellite_Imagery/Pleiades_Trento/IMG_PHR1A_P_201208281022063_SEN_1299536101-003_R1C1.TIF",
+			"rpc": "/Volumes/Samsung_T5/Satellite_Imagery/Pleiades_Trento/RPC_PHR1A_P_201208281022063_SEN_1299536101-003.XML"
+		},
+		{
+			"img": "/Volumes/Samsung_T5/Satellite_Imagery/Pleiades_Trento/IMG_PHR1A_P_201208281022159_SEN_1299536101-002_R1C1.TIF",
+			"rpc": "/Volumes/Samsung_T5/Satellite_Imagery/Pleiades_Trento/RPC_PHR1A_P_201208281022159_SEN_1299536101-002.XML"
+		}
+	],
+	"roi": {
+		"UL_Lon": 11.120,
+		"LR_Lon": 11.140,
+		"UL_Lat": 46.065,
+		"LR_Lat": 46.045
+	},
+	"dsm_resolution": 1.0,
+	"sensor": "OPTICAL",
+	"dense_matching_method": "SGM",
+	"sgm_option": {
+		"window_size": 11
+	}
+}

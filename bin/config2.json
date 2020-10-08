@@ -1,0 +1,23 @@
+{
+	"out_dir": "./output_andrea_sar/",
+	"temporary_dir": "./tmp_andrea",
+	"images": [{
+			"img": "/Volumes/Samsung_T5/Satellite_Imagery/ICEYE/Cushing/Lee_Filter/Cushing/ICEYE_X5_SLC_SL_27177_20200525T205123.h5_Spk_Cnv.tif",
+			"rpc": "/Volumes/Samsung_T5/Satellite_Imagery/ICEYE/Cushing/Lee_Filter/Cushing/ICEYE_X5_SLC_SL_27177_20200525T205123_RPC.txt"
+		},
+		{
+			"img": "/Volumes/Samsung_T5/Satellite_Imagery/ICEYE/Cushing/Lee_Filter/Cushing/ICEYE_X4_SLC_SL_27172_20200505T204745.h5_Spk_Cnv.tif",
+			"rpc": "/Volumes/Samsung_T5/Satellite_Imagery/ICEYE/Cushing/Lee_Filter/Cushing/ICEYE_X4_SLC_SL_27172_20200505T204745_RPC.txt"
+		}
+	],
+	"roi": {
+		"UL_Lon": -96.7550,
+		"UL_Lat": 35.9550,
+		"LR_Lon": -96.7200,
+		"LR_Lat": 35.9425
+	},
+	"dsm_resolution": 2.0,
+	"sensor": "SAR",
+	"dense_matching_method": "SGM"
+}
+
