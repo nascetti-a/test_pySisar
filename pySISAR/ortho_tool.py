@@ -8,6 +8,9 @@ import osr
 import pygeodesy as geo
 from pySISAR.config import cfg
 
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 #print(cfg['temporary_dir'])
 
 class RPCCoeffs(NamedTuple):
@@ -129,15 +132,14 @@ def make_ortho(
     and the upper left coordinate
     """
 
-
     cols = np.linspace(x1, x2, width)
-    print(cols)
+    #print(cols)
     #gsd = abs(cols[0] - cols[1])
     #print(gsd)
     #height = int(abs(y1 - y2) / gsd)
-    print(height)
+    #print(height)
     rows = np.linspace(y1, y2, height)
-    print(rows)
+    #print(rows)
     ortho = np.zeros(width * height)
 
     ortho_dem = np.zeros(width * height)
@@ -197,6 +199,39 @@ def linear_interp(x: float, y: float, source: np.ndarray, source_height: int) ->
 
     return int(final_value)
 
+
+@jit(nopython=True)
+def area_interp(x: float, y: float, source: np.ndarray, source_height: int) -> int:
+    x_floor = math.floor(x)
+    x_ceil = math.ceil(x)
+    y_floor = math.floor(y)
+    y_ceil = math.ceil(y)
+
+    #x_frac = x - x_floor
+    #y_frac = y - y_floor
+
+    ul_index = x_floor + source_height * y_floor
+    ur_index = x_ceil + source_height * y_floor
+    lr_index = x_ceil + source_height * y_ceil
+    ll_index = x_floor + source_height * y_ceil
+
+    ul = source[ul_index]
+    ur = source[ur_index]
+    lr = source[lr_index]
+    ll = source[ll_index]
+
+    idx: 0
+
+    final_value = 0.0
+
+    for i in range(x_ceil-x_floor):
+        for j in range(y_ceil-y_floor):
+            idx = x_floor + i + source_height * (y_floor + j)
+            final_value = final_value + source[idx]
+
+    final_value = final_value/(1+(x_ceil-x_floor)*(y_ceil-y_floor))
+
+    return int(final_value)
 
 def unpack_rpc_parameters(dataset: gdal.Dataset) -> RPCCoeffs:
     """

@@ -20,6 +20,9 @@
 	"sensor": "OPTICAL",
 	"dense_matching_method": "SGM",
 	"sgm_option": {
+		"window_size": 3
+	},
+	"flow_option":{
 		"window_size": 11
 	}
 }

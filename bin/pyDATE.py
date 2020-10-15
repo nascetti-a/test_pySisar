@@ -2,6 +2,9 @@ import cv2
 import numpy as np
 import json
 import sys
+import gdal
+
+import findpeaks
 
 from matplotlib import pyplot as plt
 
@@ -23,7 +26,7 @@ def main():
             config.json: user config dictionary
     """
 
-    config_file = "config.json"
+    config_file = "config2.json"
 
     # Initialiation of the input parameters
     with open(config_file, 'r') as f:
@@ -31,8 +34,6 @@ def main():
         initialitaion.initialize_config(user_cfg)
 
     print("pyDATE initialization complete")
-
-    sys.exit(1)
 
     print("Loading input images...")
 
@@ -56,19 +57,21 @@ def main():
 
     print("Mean Elevation of the area:")
     print(np.mean(dem[0]))
-    print(dem[0].shape)
-    print(dem[1])
+    #print(dem[0].shape)
+    #print(dem[1])
 
     upsample_dem, dem_proj = common.scaling_geo_raster(dem[0], dem[1])
 
-    print(upsample_dem.shape)
-    print(dem_proj)
+    #print(upsample_dem.shape)
+    #print(dem_proj)
 
     #plt.subplot(121), plt.imshow(dem[0], vmin=np.percentile(dem[0], 2.5), vmax=np.percentile(dem[0], 97.5))
     #plt.subplot(122), plt.imshow(upsample_dem, vmin=np.percentile(upsample_dem, 2.5), vmax=np.percentile(upsample_dem, 97.5))
     #plt.show()
 
+    print("Generating ortho image left...")
     ortho1 = make_ortho(grid.ul_lon, grid.lr_lon, grid.ul_lat, grid.lr_lat, grid.width, grid.height, grid.gsd, img1, rpc_img1.fast_rpc(), upsample_dem, dem_proj)
+    print("Generating ortho image right..")
     ortho2 = make_ortho(grid.ul_lon, grid.lr_lon, grid.ul_lat, grid.lr_lat, grid.width, grid.height, grid.gsd, img2, rpc_img2.fast_rpc(), upsample_dem, dem_proj)
 
     save_raster_as_geotiff(ortho1[0], grid.ul_lon, grid.ul_lat, grid.lr_lon, grid.lr_lat, cfg['temporary_dir'] + "/approx_ortho_right.tiff")
@@ -90,14 +93,29 @@ def main():
     conv_factor = common.compute_conversion_factor(rpc_img2, rpc_img1, grid)
 
     if cfg['dense_matching_method'] == 'SGM':
-        final_dem = ortho1[1] - (dense_results[0]/16)/conv_factor
+
+        if cfg['sensor'] == 'OPTICAL':
+            final_dem = ortho1[1] - (dense_results[0] / 16) / conv_factor[2]  # Check error in +/- changing orbit
+            final_dem[np.where(dense_results[1] == 0)] = np.nan
+
+        elif cfg['sensor'] == 'SAR':
+            final_dem = ortho1[1] - ((dense_results[0] / 16) / conv_factor[0])  #*dense_results[1]/255  # Check error in +/- changing orbit
+            #final_dem[np.where(dense_results[1] == 0)] = ortho1[1][np.where(dense_results[1] == 0)]
+            #final_dem[np.where(dense_results[1] == 0)] = np.nan
+
+        # TEST MGM
+        # raster = gdal.Open("/Users/andreanascetti/PycharmProjects/s2p/3rdparty/mgm_multi/disp16.tif")
+        # img_MGM = raster.GetRasterBand(1).ReadAsArray()
+        # img_MGM = cv2.rotate(img_MGM, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        # final_dem = ortho1[1] + (img_MGM) / conv_factor
+
 
     elif cfg['dense_matching_method'] == 'FLOW':
-        final_dem = ortho1[1] - (dense_results[1])/conv_factor
+        final_dem = ortho1[1] - (dense_results[1])/conv_factor[2] + (dense_results[0])/conv_factor[1]
 
     save_raster_as_geotiff(final_dem, grid.ul_lon, grid.ul_lat, grid.lr_lon, grid.lr_lat, cfg['out_dir'] + "/finale_dem.tiff")
 
-    plt.imshow(final_dem, vmin=np.percentile(final_dem, 5.0), vmax=np.percentile(final_dem, 95.0))
+    plt.imshow(final_dem, vmin=np.nanpercentile(final_dem, 5.0), vmax=np.nanpercentile(final_dem, 95.0))
     plt.show()
 
     return 0

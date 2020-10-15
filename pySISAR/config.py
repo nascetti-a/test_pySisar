@@ -28,3 +28,6 @@ cfg['sensor'] = 'OPTICAL'
 # Select the sgm parameters
 cfg['sgm_param'] = {'minDisp': -32, 'numDisp': 64, 'blockSize': 7, 'window_size': 3}
 
+# Select the sgm parameters
+cfg['flow_param'] = {'window_size': 11, 'levels': 3}
+

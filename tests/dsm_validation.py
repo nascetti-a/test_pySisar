@@ -4,6 +4,7 @@ import matplotlib.cm as cm
 import numpy as np
 import os, sys, getopt
 import scipy.stats
+import cv2
 
 
 # validazione_DSM.py Lidar_Roma2x2.tif CUT_DSM_tot_2m_goturk_Roma_ns_1_nd_64_MD_-16_SAD_5.TIF 1 64 -16 5 roma
@@ -44,10 +45,12 @@ def NMAD(data):
 def main():
 
     root = '/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Trento/'
-    inputfile2 = root + 'pyDATE'
-    inputfile1 = root + 'Lidar_Ref'
+    inputfile2 = root + 'pyDate_SGM/finale_dem.tiff' #'dsm_s2p.tif'  #'
+    inputfile1 = root + 'Lidar_cut.tif'
 
-    results_directory = 'ValidationResults_pyDate'
+    geoid = 49
+
+    results_directory = 'ValidationResults_s2p-pyDate_'
 
     path = root
 
@@ -98,6 +101,8 @@ def main():
     lidar = gdal.Open(inputfile1)
     DSM = gdal.Open(inputfile2)
 
+
+
     DSM_data = DSM.ReadAsArray()
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # DSM_data ha una riga e una colonna in più di reference_data
@@ -107,7 +112,7 @@ def main():
     #DSM_data = DSM_data[:-1, :-1]
     # DSM_data = DSM_data[:-1,:]
 
-    DSM_data = DSM_data - 49.0
+    DSM_data = DSM_data - geoid
 
     # trasformo -9999 in nan
     indici = np.where(DSM_data < -500)
@@ -141,8 +146,43 @@ def main():
     'REF', reference_data.shape
     print
     '\n'
+
+    #reference_data = reference_data[0:-2, 0: -2]
+    #DSM_data = DSM_data[1:-1, 1:-1]
+
+    warp_mode = cv2.MOTION_TRANSLATION
+    warp_matrix = np.eye(2, 3, dtype=np.float32)
+    print(warp_matrix)
+    # Specify the number of iterations.
+    number_of_iterations = 500;
+
+    # Specify the threshold of the increment
+    # in the correlation coefficient between two iterations
+    termination_eps = 1e-3;
+
+    # Define termination criteria
+    criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations, termination_eps)
+
+    reference_data_nan = reference_data.copy()
+    DSM_data_nan = DSM_data.copy()
+
+    ind = np.isnan(reference_data)
+    reference_data[ind] = -9999
+
+    ind2 = np.isnan(DSM_data)
+    DSM_data[ind2] = -9999
+
+
+    #(cc, warp_matrix) = cv2.findTransformECC(reference_data.astype("float32"), DSM_data.astype("float32"), warp_matrix,
+    #                                         warp_mode, criteria, None, 1)
+
+    sz = reference_data.shape
+    #DSM_data_nan = cv2.warpAffine(DSM_data_nan, warp_matrix, (sz[1], sz[0]), flags=cv2.INTER_NEAREST + cv2.WARP_INVERSE_MAP);
+
+    print(warp_matrix)
+
     # pdb.set_trace()
-    ElevationDifference = reference_data - DSM_data
+    ElevationDifference = reference_data_nan - DSM_data_nan
     print
     'not nan', np.count_nonzero(~np.isnan(ElevationDifference)), ElevationDifference.shape[0] * \
     ElevationDifference.shape[1]

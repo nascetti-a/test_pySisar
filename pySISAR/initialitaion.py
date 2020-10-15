@@ -101,6 +101,9 @@ def check_parameters(d):
     if 'sgm_option' in d:
         cfg['sgm_param'].update(d['sgm_option'])
 
+    if 'flow_option' in d:
+        cfg['flow_param'].update(d['flow_option'])
+
 
 def make_dirs():
     """
