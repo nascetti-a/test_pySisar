@@ -1,6 +1,6 @@
 #from .SARmodel import SLmodel
+#from .RPCmodel import RPCmodel
 
-from .RPCmodel import RPCmodel
 from .rpc_utils import compute_height
 from .matching_tool import align_and_compute_disp
 
