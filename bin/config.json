@@ -16,9 +16,9 @@
 		"UL_Lat": 46.065,
 		"LR_Lat": 46.045
 	},
-	"dsm_resolution": 1.0,
+	"dsm_resolution": 2.0,
 	"sensor": "OPTICAL",
-	"dense_matching_method": "SGM",
+	"dense_matching_method": "NCC",
 	"sgm_option": {
 		"window_size": 3
 	},

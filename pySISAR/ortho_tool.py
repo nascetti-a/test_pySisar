@@ -101,6 +101,23 @@ def lon_lat_alt_to_xy(
 
     return samp_number, line_number
 
+# @jit(nopython=True, parallel=True, nogil=True)
+# def cross_corr(
+#     master: np.ndarray,
+#     slave: np.ndarray,
+#     win: int,
+# ) -> np.array:
+#
+#     width:
+#
+#
+#     cc_img = np.zeros(width * height)
+#
+#     #i = np.linspace(
+#     #j =
+#
+#     return cc_img
+
 
 @jit(nopython=True, parallel=True, nogil=True)
 def make_ortho(

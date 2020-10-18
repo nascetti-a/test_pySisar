@@ -21,7 +21,7 @@ def align_and_compute_disp(img_pre, img_post, rotate=False):  # img_enhance=Fals
     sz = img_pre.shape
 
     # Define the motion model
-    warp_mode = cv2.MOTION_TRANSLATION #cv2.MOTION_EUCLIDEAN #   # cv2.MOTION_EUCLIDEAN  # cv2.MOTION_TRANSLATION or cv2.MOTION_EUCLIDEAN
+    warp_mode = cv2.MOTION_EUCLIDEAN #cv2.MOTION_TRANSLATION  #   # cv2.MOTION_EUCLIDEAN  # cv2.MOTION_TRANSLATION or cv2.MOTION_EUCLIDEAN
 
     # Define 2x3 or 3x3 matrices and initialize the matrix to identity
     if warp_mode == cv2.MOTION_HOMOGRAPHY:
@@ -74,6 +74,18 @@ def align_and_compute_disp(img_pre, img_post, rotate=False):  # img_enhance=Fals
         plt.show()
 
         return flow[..., 0], flow[..., 1]
+
+    elif cfg['dense_matching_method'] == 'NCC':
+
+        ncc_disp, ncc_conf = fast_NCC(img_pre, img_post_aligned, rotate)
+
+        plt.subplot(121), plt.imshow(ncc_disp, vmin=np.percentile(ncc_disp, 2.5),
+                                     vmax=np.percentile(ncc_disp, 97.5))
+        plt.subplot(122), plt.imshow(ncc_conf, vmin=0,
+                                     vmax=0.4)
+        plt.show()
+
+        return ncc_disp, ncc_conf
 
     else:
         print("ERROR: Wrong matching method")
@@ -179,9 +191,9 @@ def optical_flow(imgL, imgR):
 
     param = cfg['flow_param']
 
-    if cfg['sensor'] == 'SAR':
-        imgL = common.lee_filter(imgL, 11)
-        imgR = common.lee_filter(imgR, 11)
+    #if cfg['sensor'] == 'SAR':
+        #imgL = common.lee_filter(imgL, 11)
+        #imgR = common.lee_filter(imgR, 11)
         #imgL = common.scaling_sar(imgL)
         #imgR = common.scaling_sar(imgR)
 
@@ -203,5 +215,131 @@ def optical_flow(imgL, imgR):
     hsv = np.asarray(hsv, dtype=np.float32)
     rgb_flow = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
     return flow, rgb_flow
+
+
+def translaton(image, shape):
+    step = round((shape[0]-1)/2)
+    print(step)
+    shifted = []
+    for i in range(0, step+1):
+        for j in range(0, step+1):
+            if i==0 and j==0:
+                M1 = np.float32([[1, 0, i], [0, 1, j]])
+                shifted.append(cv2.warpAffine(image, M1, (image.shape[1], image.shape[0])))
+            elif i==0 and j!=0:
+                M1 = np.float32([[1, 0, i], [0, 1, j]])
+                M2 = np.float32([[1, 0, i], [0, 1, -j]])
+                shifted.append(cv2.warpAffine(image, M1, (image.shape[1], image.shape[0])))
+                shifted.append(cv2.warpAffine(image, M2, (image.shape[1], image.shape[0])))
+            elif i!=0 and j==0:
+                M1 = np.float32([[1, 0, i], [0, 1, j]])
+                M2 = np.float32([[1, 0, -i], [0, 1, j]])
+                shifted.append(cv2.warpAffine(image, M1, (image.shape[1], image.shape[0])))
+                shifted.append(cv2.warpAffine(image, M2, (image.shape[1], image.shape[0])))
+            else:
+                M1 = np.float32([[1, 0, i], [0, 1, j]])
+                M2 = np.float32([[1, 0, -i], [0, 1, -j]])
+                M3 = np.float32([[1, 0, -i], [0, 1, j]])
+                M4 = np.float32([[1, 0, i], [0, 1, -j]])
+                shifted .append(cv2.warpAffine(image, M1, (image.shape[1], image.shape[0])))
+                shifted.append(cv2.warpAffine(image, M2, (image.shape[1], image.shape[0])))
+                shifted.append(cv2.warpAffine(image, M3, (image.shape[1], image.shape[0])))
+                shifted.append(cv2.warpAffine(image, M4, (image.shape[1], image.shape[0])))
+
+    print(len(shifted))
+    return np.array(shifted)
+
+
+#I(x,y)-avg(I(x,y))
+def img_sub_avg(img_shifted, avg_img):
+    len, height, width = img_shifted.shape
+    tmp_ncc1 = np.zeros([len, height, width])
+    for i in range(len):
+        tmp_ncc1[i] = img_shifted[i] - avg_img
+    print(tmp_ncc1)
+    return tmp_ncc1
+
+
+def NCC(img1_sub_avg,img2_sub_avg, threshold, max_d):
+    len, height, width = img1_sub_avg.shape
+    thershould_shifted = np.zeros([len, height, width])
+    ncc_max = np.zeros([height, width])
+    ncc_d = np.zeros([height, width])
+    for j in range(3, max_d):
+        tmp_ncc1 = np.zeros([height, width])
+        tmp_ncc2 = np.zeros([height, width])
+        tmp_ncc3 = np.zeros([height, width])
+        for k in range(len):
+            M1 = np.float32([[1, 0, -j - 1], [0, 1, 0]])
+            thershould_shifted[k] = cv2.warpAffine(img1_sub_avg[k], M1, (img1_sub_avg.shape[2], img1_sub_avg.shape[1]))
+        for i in range(len):
+            tmp_ncc1 += (img2_sub_avg[i])*(thershould_shifted[i])
+            tmp_ncc2 += pow(img2_sub_avg[i], 2)
+            tmp_ncc3 += pow(thershould_shifted[i], 2)
+
+        tmp_ncc2 = tmp_ncc2*tmp_ncc3
+        tmp_ncc2 = np.sqrt(tmp_ncc2)
+        tmp_ncc4 = tmp_ncc1/tmp_ncc2
+        for m in range(height):
+            for n in range(width):
+                if tmp_ncc4[m, n] > ncc_max[m ,n] and tmp_ncc4[m, n] > threshold:
+                    ncc_max[m, n] = tmp_ncc4[m, n]
+                    ncc_d[m , n] = j
+    for i in ncc_d:
+        print(i)
+    return ncc_d, ncc_max
+
+
+def fast_NCC(imgL, imgR, rotate=False):
+
+    if rotate:
+        imgL = cv2.rotate(imgL, cv2.ROTATE_90_CLOCKWISE)
+        imgR = cv2.rotate(imgR, cv2.ROTATE_90_CLOCKWISE)
+
+
+    cv2.imwrite(cfg['temporary_dir'] + "/sat16L.tif", imgL)
+    cv2.imwrite(cfg['temporary_dir'] + "/sat16R.tif", imgR)
+
+    img1 = common.norm_uint8(imgL)
+    img2 = common.norm_uint8(imgR)
+
+    #M1 = np.float32([[1, 0, 8], [0, 1, 0]])
+    #img2 = cv2.warpAffine(img2, M1, (img2.shape[1], img2.shape[0]))
+
+    cv2.imwrite(cfg['temporary_dir'] + "/left_8bit.png", img1)
+    cv2.imwrite(cfg['temporary_dir'] + "/right_8bit.png", img2)
+
+    param = cfg['sgm_param']
+
+    #disparity = np.zeros([rows, cols])
+    #NCC_value = np.zeros([rows, cols])
+    #deeps = np.zeros([rows, cols])
+
+    avg_img1 = cv2.medianBlur(img1, 11) # TO DO: test blur with 16 Bit image for SAR
+    avg_img2 = cv2.medianBlur(img2, 11)
+    fimg1 = img1.astype(np.float32)
+    fimg2 = img2.astype(np.float32)
+    avg_img1 = avg_img1.astype(np.float32)
+    avg_img2  = avg_img2.astype(np.float32)
+    img1_shifted = translaton(fimg1, [9, 9])
+    img2_shifted = translaton(fimg2, [9, 9])
+    img1_sub_avg = img_sub_avg(img1_shifted, avg_img1)
+    img2_sub_avg = img_sub_avg(img2_shifted, avg_img2)
+    ncc_d, ncc_max = NCC(img1_sub_avg,img2_sub_avg, threshold =0.4, max_d=16)
+
+    grid = cfg['grid']
+
+    save_raster_as_geotiff(ncc_d, grid.ul_lon, grid.ul_lat, grid.lr_lon, grid.lr_lat,
+                           cfg['temporary_dir'] + "/disp_NCC.tiff")
+
+    save_raster_as_geotiff(ncc_max, grid.ul_lon, grid.ul_lat, grid.lr_lon, grid.lr_lat,
+                           cfg['temporary_dir'] + "/conf_NCC.tiff")
+
+    if rotate:
+        ncc_d = cv2.rotate(ncc_d, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        ncc_max = cv2.rotate(ncc_max, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+    return ncc_d, ncc_max
+
 
 

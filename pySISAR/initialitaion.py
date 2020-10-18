@@ -85,7 +85,7 @@ def check_parameters(d):
             print(d['roi'])
 
     if 'dense_matching_method' in d:
-        if d['dense_matching_method'] != 'SGM' and d['dense_matching_method'] != 'FLOW':
+        if d['dense_matching_method'] != 'SGM' and d['dense_matching_method'] != 'FLOW' and d['dense_matching_method'] != 'NCC':
             print("Invalid matching method: please select one of the following sgm or flow")
             sys.exit(1)
         else:

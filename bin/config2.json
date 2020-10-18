@@ -16,18 +16,22 @@
 		"LR_Lon": -96.71925,
 		"LR_Lat": 35.9436
 	},
-	"dsm_resolution": 3.0,
+	"dsm_resolution": 2.0,
 	"sensor": "SAR",
-	"dense_matching_method": "SGM",
+	"dense_matching_method": "NCC",
+	"ncc_option": {
+		"window_size": 11,
+		"numDisp": 32
+	},
 	"sgm_option": {
 		"window_size": 7,
-		"numDisp": 32,
-		"minDisp": -16,
+		"numDisp": 64,
+		"minDisp": -32,
 		"blockSize": 15
 	},
 	"flow_option":{
 		"window_size": 25,
-		"levels": 7
+		"levels": 1
 	}
 }
 

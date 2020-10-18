@@ -110,7 +110,7 @@ def scaling_sar(img, f_scale=2):
 
     return scale_img
 
-def scaling_geo_raster(img, proj, f_scale=8):
+def scaling_geo_raster(img, proj, f_scale=32):
 
     d_size = (img.shape[1]*f_scale, img.shape[0]*f_scale)
 
