@@ -300,14 +300,14 @@ def fast_NCC(imgL, imgR, rotate=False):
     cv2.imwrite(cfg['temporary_dir'] + "/sat16L.tif", imgL)
     cv2.imwrite(cfg['temporary_dir'] + "/sat16R.tif", imgR)
 
-    img1 = common.norm_uint8(imgL)
-    img2 = common.norm_uint8(imgR)
+    #img1 = common.norm_uint8(imgL)
+    #img2 = common.norm_uint8(imgR)
 
     #M1 = np.float32([[1, 0, 8], [0, 1, 0]])
     #img2 = cv2.warpAffine(img2, M1, (img2.shape[1], img2.shape[0]))
 
-    cv2.imwrite(cfg['temporary_dir'] + "/left_8bit.png", img1)
-    cv2.imwrite(cfg['temporary_dir'] + "/right_8bit.png", img2)
+    #cv2.imwrite(cfg['temporary_dir'] + "/left_8bit.png", img1)
+    #cv2.imwrite(cfg['temporary_dir'] + "/right_8bit.png", img2)
 
     param = cfg['sgm_param']
 
@@ -315,8 +315,8 @@ def fast_NCC(imgL, imgR, rotate=False):
     #NCC_value = np.zeros([rows, cols])
     #deeps = np.zeros([rows, cols])
 
-    avg_img1 = cv2.medianBlur(img1, 11) # TO DO: test blur with 16 Bit image for SAR
-    avg_img2 = cv2.medianBlur(img2, 11)
+    avg_img1 = cv2.blur(img1, (11, 11)) # TO DO: test blur with 16 Bit image for SAR
+    avg_img2 = cv2.blur(img2, (11, 11))
     fimg1 = img1.astype(np.float32)
     fimg2 = img2.astype(np.float32)
     avg_img1 = avg_img1.astype(np.float32)

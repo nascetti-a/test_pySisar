@@ -18,16 +18,16 @@
 	},
 	"dsm_resolution": 2.0,
 	"sensor": "SAR",
-	"dense_matching_method": "NCC",
+	"dense_matching_method": "SGM",
 	"ncc_option": {
 		"window_size": 11,
-		"numDisp": 32
+		"numDisp": 16
 	},
 	"sgm_option": {
-		"window_size": 7,
-		"numDisp": 64,
-		"minDisp": -32,
-		"blockSize": 15
+		"window_size": 11,
+		"numDisp": 32,
+		"minDisp": -16,
+		"blockSize": 7
 	},
 	"flow_option":{
 		"window_size": 25,

@@ -104,6 +104,9 @@ def check_parameters(d):
     if 'flow_option' in d:
         cfg['flow_param'].update(d['flow_option'])
 
+    if 'ncc_option' in d:
+        cfg['ncc_param'].update(d['ncc_option'])
+
 
 def make_dirs():
     """

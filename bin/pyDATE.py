@@ -115,7 +115,7 @@ def main():
 
     elif cfg['dense_matching_method'] == 'NCC':
         final_dem = ortho1[1] + (dense_results[0]) / conv_factor[0]
-        final_dem = cv2.blur(final_dem, (7,7))
+        final_dem = cv2.blur(final_dem, (3, 3))
 
     save_raster_as_geotiff(final_dem, grid.ul_lon, grid.ul_lat, grid.lr_lon, grid.lr_lat, cfg['out_dir'] + "/finale_dem.tiff")
 
