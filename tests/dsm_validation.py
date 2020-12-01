@@ -44,13 +44,13 @@ def NMAD(data):
 
 def main():
 
-    root = '/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Trento/'
-    inputfile2 = root + 'pyDate_SGM/finale_dem.tiff' #'dsm_s2p.tif'  #'
-    inputfile1 = root + 'Lidar_cut.tif'
+    root = '/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Cushing/Validation/'
+    inputfile2 = root + 'pyDate7277_SGM.tiff' #'dsm_s2p.tif'  #'
+    inputfile1 = root + 'Lidar_Ref.tif'
 
-    geoid = 49
+    geoid = 29
 
-    results_directory = 'ValidationResults_s2p-pyDate_'
+    results_directory = 'ValidationResults_NCC'
 
     path = root
 
@@ -274,7 +274,7 @@ def main():
     file_stats.close()
 
     plt.figure('Differences')
-    plt.title('Reference - Agisoft DSM')
+    plt.title('Reference - DSM')
     plt.imshow(ElevationDifference, cmap=cm.jet, interpolation='None', vmin = -2*std, vmax = 2*std)
     # plt.imshow(ElevationDifference, interpolation = 'bicubic',  cmap = 'RdBu')
     # plt.colorbar(spacing ='uniform', extend ='both')

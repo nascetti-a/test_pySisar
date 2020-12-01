@@ -1,12 +1,10 @@
 import cv2
 import numpy as np
 import json
-import sys
-import gdal
-
-import findpeaks
 
 from matplotlib import pyplot as plt
+from os import sys, path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from pySISAR import align_and_compute_disp
 from pySISAR import make_ortho
@@ -26,7 +24,7 @@ def main():
             config.json: user config dictionary
     """
 
-    config_file = "config2.json"
+    config_file = "config.json"
 
     # Initialiation of the input parameters
     with open(config_file, 'r') as f:

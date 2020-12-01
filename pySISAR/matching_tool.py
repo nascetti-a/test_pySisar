@@ -309,23 +309,25 @@ def fast_NCC(imgL, imgR, rotate=False):
     #cv2.imwrite(cfg['temporary_dir'] + "/left_8bit.png", img1)
     #cv2.imwrite(cfg['temporary_dir'] + "/right_8bit.png", img2)
 
-    param = cfg['sgm_param']
+    param = cfg['ncc_param']
+
+
 
     #disparity = np.zeros([rows, cols])
     #NCC_value = np.zeros([rows, cols])
     #deeps = np.zeros([rows, cols])
 
-    avg_img1 = cv2.blur(img1, (11, 11)) # TO DO: test blur with 16 Bit image for SAR
-    avg_img2 = cv2.blur(img2, (11, 11))
-    fimg1 = img1.astype(np.float32)
-    fimg2 = img2.astype(np.float32)
+    avg_img1 = cv2.blur(imgL, (param['window_size'], param['window_size'])) # TO DO: test blur with 16 Bit image for SAR
+    avg_img2 = cv2.blur(imgR, (param['window_size'], param['window_size']))
+    fimg1 = imgL.astype(np.float32)
+    fimg2 = imgR.astype(np.float32)
     avg_img1 = avg_img1.astype(np.float32)
     avg_img2  = avg_img2.astype(np.float32)
-    img1_shifted = translaton(fimg1, [9, 9])
-    img2_shifted = translaton(fimg2, [9, 9])
+    img1_shifted = translaton(fimg1, [param['window_size'], param['window_size']])
+    img2_shifted = translaton(fimg2, [param['window_size'], param['window_size']])
     img1_sub_avg = img_sub_avg(img1_shifted, avg_img1)
     img2_sub_avg = img_sub_avg(img2_shifted, avg_img2)
-    ncc_d, ncc_max = NCC(img1_sub_avg,img2_sub_avg, threshold =0.4, max_d=16)
+    ncc_d, ncc_max = NCC(img1_sub_avg,img2_sub_avg, threshold =param['threshold'], max_d=16)
 
     grid = cfg['grid']
 

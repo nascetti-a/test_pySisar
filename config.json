@@ -10,6 +10,7 @@
 			"rpc": "/Volumes/Samsung_T5/Satellite_Imagery/Pleiades_Trento/RPC_PHR1A_P_201208281022159_SEN_1299536101-002.XML"
 		}
 	],
+	"geoid_path": "./geoid/egm2008-5.pgm",
 	"roi": {
 		"UL_Lon": 11.120,
 		"LR_Lon": 11.140,

@@ -1,5 +1,5 @@
 {
-	"out_dir": "/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Cushing/pydate",
+	"out_dir": "/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Cushing/pydateNCC",
 	"temporary_dir": "/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Cushing/pydate/tmp_andrea_sar",
 	"images": [{
 			"img": "/Volumes/Samsung_T5/Satellite_Imagery/ICEYE/Cushing/Lee_Sigma_New/ICEYE_X4_SLC_SL_27170_20200420T212130.tif",
@@ -18,13 +18,14 @@
 	},
 	"dsm_resolution": 2.0,
 	"sensor": "SAR",
-	"dense_matching_method": "SGM",
+	"dense_matching_method": "NCC",
 	"ncc_option": {
 		"window_size": 11,
-		"numDisp": 16
+		"numDisp": 8,
+		"threshold": 0.5
 	},
 	"sgm_option": {
-		"window_size": 11,
+		"window_size": 13,
 		"numDisp": 32,
 		"minDisp": -16,
 		"blockSize": 7
