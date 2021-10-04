@@ -364,7 +364,7 @@ def coarse_dem(
         min_lat,
         degrees_lon,
         degrees_lat,
-        rate=sampling_rate,
+        #rate=sampling_rate,
         data_source='AWS', #"NASA"
         output_name=cfg['temporary_dir']+output_path,
     )

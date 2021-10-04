@@ -107,7 +107,6 @@ def main():
         # img_MGM = cv2.rotate(img_MGM, cv2.ROTATE_90_COUNTERCLOCKWISE)
         # final_dem = ortho1[1] + (img_MGM) / conv_factor
 
-
     elif cfg['dense_matching_method'] == 'FLOW':
         final_dem = ortho1[1] - (dense_results[1])/conv_factor[2] + (dense_results[0])/conv_factor[1]
 
@@ -117,7 +116,7 @@ def main():
 
     save_raster_as_geotiff(final_dem, grid.ul_lon, grid.ul_lat, grid.lr_lon, grid.lr_lat, cfg['out_dir'] + "/finale_dem.tiff")
 
-    plt.imshow(final_dem, vmin=np.nanpercentile(final_dem, 5.0), vmax=np.nanpercentile(final_dem, 95.0))
+    plt.imshow(final_dem, vmin=np.nanpercentile(final_dem, 15.0), vmax=np.nanpercentile(final_dem, 95.0))
     plt.show()
 
     return 0
