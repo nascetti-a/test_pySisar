@@ -13,6 +13,7 @@ cfg['out_dir'] = "./pyDate_output"
 # path to directory where (many) temporary files will be stored
 cfg['temporary_dir'] = "./pyDate_tmp"
 
+
 # resolution of the output digital surface model, in meters per pixel
 cfg['dsm_resolution'] = 2
 
