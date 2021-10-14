@@ -24,7 +24,7 @@ def main():
             config.json: user config dictionary
     """
 
-    config_file = "config.json"
+    config_file = "config2.json"
 
     # Initialiation of the input parameters
     with open(config_file, 'r') as f:
@@ -94,7 +94,7 @@ def main():
 
         if cfg['sensor'] == 'OPTICAL':
             final_dem = ortho1[1] - (dense_results[0] / 16) / conv_factor[2]  # Check error in +/- changing orbit
-            final_dem[np.where(dense_results[1] == 0)] = np.nan
+            #final_dem[np.where(dense_results[1] == 0)] = np.nan
 
         elif cfg['sensor'] == 'SAR':
             final_dem = ortho1[1] - ((dense_results[0] / 16) / conv_factor[0])  #*dense_results[1]/255  # Check error in +/- changing orbit

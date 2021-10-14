@@ -1,32 +1,32 @@
 {
-	"out_dir": "/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Cushing/pydateNCC",
-	"temporary_dir": "/Volumes/Samsung_T5/DEM_Extraction_pyDATE/Cushing/pydate/tmp_andrea_sar",
+	"out_dir": "/Volumes/Samsung_T5/DEM_Extraction_pyDATE/ISPRS/",
+	"temporary_dir": "/Volumes/Samsung_T5/DEM_Extraction_pyDATE/ISPRS/tmp/",
 	"images": [{
-			"img": "/Volumes/Samsung_T5/Satellite_Imagery/ICEYE/Cushing/Lee_Sigma_New/ICEYE_X4_SLC_SL_27170_20200420T212130.tif",
-			"rpc": "/Volumes/Samsung_T5/Satellite_Imagery/ICEYE/Cushing/Lee_Sigma_New/ICEYE_X4_SLC_SL_27170_20200420T212130_RPC.txt"
+			"img": "/Volumes/Samsung_T5/Satellite_Imagery/ISPRS/po_162762_0000000/po_162762_pan_0000000.tif",
+			"rpc": "/Volumes/Samsung_T5/Satellite_Imagery/ISPRS/po_162762_0000000/po_162762_pan_0000000_rpc.txt"
 		},
 		{
-			"img": "/Volumes/Samsung_T5/Satellite_Imagery/ICEYE/Cushing/Lee_Sigma_New/ICEYE_X5_SLC_SL_27176_20200508T211604.tif",
-			"rpc": "/Volumes/Samsung_T5/Satellite_Imagery/ICEYE/Cushing/Lee_Sigma_New/ICEYE_X5_SLC_SL_27176_20200508T211604_RPC.txt"
+			"img": "/Volumes/Samsung_T5/Satellite_Imagery/ISPRS/po_162774_0000000/po_162774_pan_0000000.tif",
+			"rpc": "/Volumes/Samsung_T5/Satellite_Imagery/ISPRS/po_162774_0000000/po_162774_pan_0000000_rpc.txt"
 		}
 	],
 	"roi": {
-		"UL_Lon": -96.7495,
-		"UL_Lat": 35.9687,
-		"LR_Lon": -96.71925,
-		"LR_Lat": 35.9436
+		"UL_Lon": 147.2326,
+		"UL_Lat": -42.8173,
+		"LR_Lon": 147.3074,
+		"LR_Lat": -42.8715
 	},
-	"dsm_resolution": 2.0,
-	"sensor": "SAR",
-	"dense_matching_method": "NCC",
+	"dsm_resolution": 0.5,
+	"sensor": "OPTICAL",
+	"dense_matching_method": "SGM",
 	"ncc_option": {
 		"window_size": 11,
 		"numDisp": 8,
 		"threshold": 0.5
 	},
 	"sgm_option": {
-		"window_size": 13,
-		"numDisp": 32,
+		"window_size": 3,
+		"numDisp": 128,
 		"minDisp": -16,
 		"blockSize": 7
 	},
